@@ -1,5 +1,4 @@
 #include "MechaQMC5883.h"
-
 #include <Wire.h>
 
 MechaQMC5883::MechaQMC5883(TwoWire &wire) :
@@ -78,4 +77,25 @@ int MechaQMC5883::read(int *x, int *y, int *z, float *a) {
 float MechaQMC5883::azimuth(int *a, int *b) {
     float azimuth = atan2((int) *a, (int) *b) * 180.0 / PI;
     return azimuth < 0 ? 360 + azimuth : azimuth;
+}
+
+void MechaQMC5883::tare() {
+    int err, x, y, z;
+    for (int i = 0; i < 200; i++) { // discard first 200 values
+        err = read(&x, &y, &z) * -1;
+    }
+    err        = read(&x, &y, &z) * -1;
+    _zeroError = 360 - LIM_ANGLE(DEG(atan2(x, y)));
+}
+
+float MechaQMC5883::readAngle() {
+    int err, x, y, z;
+    err = read(&x, &y, &z) * -1;
+    return LIM_ANGLE((360 - LIM_ANGLE(DEG(atan2(x, y)))) - _zeroError);
+}
+
+float MechaQMC5883::readRawAngle() {
+    int err, x, y, z;
+    err = read(&x, &y, &z) * -1;
+    return 360 - LIM_ANGLE(DEG(atan2(x, y)));
 }

@@ -6,6 +6,12 @@
 
 #define QMC5883_ADDR 0x0D
 
+// Convert degrees to radians
+#define DEG(x) ((x) *180.0f / (float) PI)
+
+// Limit angle to 0 to 360 degrees
+#define LIM_ANGLE(angle) (angle > 0 ? fmod(angle, 360) : fmod(angle, 360) + 360)
+
 // REG CONTROL
 
 // 0x09
@@ -35,17 +41,21 @@ class MechaQMC5883 {
 
     void setMode(uint16_t mode, uint16_t odr, uint16_t rng, uint16_t osr); // setting
 
-    void softReset(); // soft RESET
+    void softReset();                  // soft RESET
+    int  read(int *x, int *y, int *z); // reading
+    int  read(int *x, int *y, int *z, int *a);
+    int  read(int *x, int *y, int *z, float *a);
 
-    int read(int *x, int *y, int *z); // reading
-    int read(int *x, int *y, int *z, int *a);
-    int read(int *x, int *y, int *z, float *a);
+    void  tare();
+    float readAngle();
+    float readRawAngle();
 
     float azimuth(int *a, int *b);
 
     private:
-    void    WriteReg(uint8_t Reg, uint8_t val);
+    void     WriteReg(uint8_t Reg, uint8_t val);
     TwoWire &_wire;
+    float    _zeroError = 0;
 
     uint8_t address = QMC5883_ADDR;
 };
