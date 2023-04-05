@@ -2,15 +2,19 @@
 
 #include <Wire.h>
 
+MechaQMC5883::MechaQMC5883(TwoWire &wire) :
+    _wire(wire) {
+}
+
 void MechaQMC5883::setAddress(uint8_t addr) {
     address = addr;
 }
 
 void MechaQMC5883::WriteReg(byte Reg, byte val) {
-    Wire.beginTransmission(address); // start talking
-    Wire.write(Reg);                 // Tell the HMC5883 to Continuously Measure
-    Wire.write(val);                 // Set the Register
-    Wire.endTransmission();
+    _wire.beginTransmission(address); // start talking
+    _wire.write(Reg);                 // Tell the HMC5883 to Continuously Measure
+    _wire.write(val);                 // Set the Register
+    _wire.endTransmission();
 }
 
 void MechaQMC5883::init() {
@@ -45,17 +49,17 @@ void MechaQMC5883::softReset() {
  *  - 8:overflow (magnetic field too strong)
  */
 int MechaQMC5883::read(int *x, int *y, int *z) {
-    Wire.beginTransmission(address);
-    Wire.write(0x00);
-    int err = Wire.endTransmission();
+    _wire.beginTransmission(address);
+    _wire.write(0x00);
+    int err = _wire.endTransmission();
     if (err) {
         return err;
     }
-    Wire.requestFrom(address, 7);
-    *x            = (int) (int16_t) (Wire.read() | Wire.read() << 8);
-    *y            = (int) (int16_t) (Wire.read() | Wire.read() << 8);
-    *z            = (int) (int16_t) (Wire.read() | Wire.read() << 8);
-    byte overflow = Wire.read() & 0x02;
+    _wire.requestFrom(address, 7);
+    *x            = (int) (int16_t) (_wire.read() | _wire.read() << 8);
+    *y            = (int) (int16_t) (_wire.read() | _wire.read() << 8);
+    *z            = (int) (int16_t) (_wire.read() | _wire.read() << 8);
+    byte overflow = _wire.read() & 0x02;
     return overflow << 2;
 }
 

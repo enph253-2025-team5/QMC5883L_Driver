@@ -28,6 +28,7 @@
 
 class MechaQMC5883 {
     public:
+    MechaQMC5883(TwoWire &wire);
     void setAddress(uint8_t addr);
 
     void init(); // init qmc5883
@@ -43,7 +44,8 @@ class MechaQMC5883 {
     float azimuth(int *a, int *b);
 
     private:
-    void WriteReg(uint8_t Reg, uint8_t val);
+    void    WriteReg(uint8_t Reg, uint8_t val);
+    TwoWire &_wire;
 
     uint8_t address = QMC5883_ADDR;
 };
