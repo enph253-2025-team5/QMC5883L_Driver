@@ -91,6 +91,9 @@ void MechaQMC5883::tare() {
 float MechaQMC5883::readAngle() {
     int err, x, y, z;
     err = read(&x, &y, &z) * -1;
+    if (err) {
+        init();
+    }
     return LIM_ANGLE((360 - LIM_ANGLE(DEG(atan2(x, y)))) - _zeroError);
 }
 
