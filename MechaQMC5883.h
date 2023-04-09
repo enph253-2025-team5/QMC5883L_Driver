@@ -34,7 +34,7 @@
 
 class MechaQMC5883 {
     public:
-    MechaQMC5883(TwoWire &wire);
+    MechaQMC5883(TwoWire &wire, float x, float y, float e, float angle);
     void setAddress(uint8_t addr);
 
     void init(); // init qmc5883
@@ -49,15 +49,16 @@ class MechaQMC5883 {
     void  tare();
     float readAngle();
     float readRawAngle();
-
+    void  printRaw();
     float azimuth(int *a, int *b);
 
     private:
-    void     WriteReg(uint8_t Reg, uint8_t val);
+    void     _WriteReg(uint8_t Reg, uint8_t val);
     TwoWire &_wire;
     float    _zeroError = 0;
-
-    uint8_t address = QMC5883_ADDR;
+    float    _calibration[4];
+    uint8_t  _address = QMC5883_ADDR;
+    void     _correctReadings(int *x, int *y);
 };
 
 #endif
