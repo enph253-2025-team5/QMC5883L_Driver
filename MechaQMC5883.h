@@ -6,11 +6,13 @@
 
 #define QMC5883_ADDR 0x0D
 
+#ifndef DEFINITIONS_H
 // Convert degrees to radians
 #define DEG(x) ((x) *180.0f / (float) PI)
 
 // Limit angle to 0 to 360 degrees
 #define LIM_ANGLE(angle) (angle > 0 ? fmod(angle, 360) : fmod(angle, 360) + 360)
+#endif
 
 // REG CONTROL
 
