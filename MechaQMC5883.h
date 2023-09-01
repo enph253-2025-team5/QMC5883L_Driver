@@ -53,6 +53,7 @@ class MechaQMC5883 {
     float readRawAngle();
     void  printRaw();
     float azimuth(int *a, int *b);
+    bool  isError = false;
 
     private:
     void     _WriteReg(uint8_t Reg, uint8_t val);
@@ -162,8 +163,11 @@ float MechaQMC5883::readAngle() {
     int err, x, y, z;
     err = read(&x, &y, &z) * -1;
     if (err) {
+        isError = true;
         Serial.println("Error occured reading from IMU.");
         init();
+    } else {
+        isError = false;
     }
     return LIM_ANGLE((360 - LIM_ANGLE(DEG(atan2(x, y)))) - _zeroError);
 }
@@ -204,7 +208,7 @@ void MechaQMC5883::_correctReadings(int *x, int *y) {
         float sine   = sinf(_calibration[3] / 180 * PI);
         float cosine = cosf(_calibration[3] / 180 * PI);
         // Rotate the ellipse to the axis and compress the x axis into a circle
-        *x = _x * cosine + _y * sine / _calibration[2];
+        *x = (_x * cosine + _y * sine) / _calibration[2];
         *y = -_x * sine + _y * cosine;
 
         _x = *x;
