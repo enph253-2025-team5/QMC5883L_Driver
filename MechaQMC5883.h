@@ -52,6 +52,7 @@ class MechaQMC5883 {
     float readAngle();
     float readRawAngle();
     void  printRaw();
+    void  readRaw(int &x, int &y);
     float azimuth(int *a, int *b);
     bool  isError = false;
 
@@ -180,6 +181,22 @@ float MechaQMC5883::readRawAngle() {
 
 void MechaQMC5883::printRaw() {
     int err, x, y, z;
+    err = read(&x, &y, &z) * -1;
+    if (err) {
+        Serial.println("Error occured reading from IMU.");
+        init();
+    } else {
+        Serial.print('(');
+        Serial.print(x);
+        Serial.print(",");
+        Serial.print(y);
+        Serial.print(')');
+        Serial.println();
+    }
+}
+
+void MechaQMC5883::readRaw(int &x, int &y) {
+    int err, z;
     err = read(&x, &y, &z) * -1;
     if (err) {
         Serial.println("Error occured reading from IMU.");
