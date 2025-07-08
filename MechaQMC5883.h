@@ -33,7 +33,7 @@ public:
 
 /// @brief Construct a MechaQMC5883 object
 /// @param I2CBus The I2C bus to use. Default: `Wire` (equivalent to TwoWire(0)).
-MechaQMC5883(TwoWire I2CBus = Wire) : I2CBus(I2CBus) {};
+MechaQMC5883(TwoWire* I2CBus = &Wire) : I2CBus(I2CBus) {};
 
 void setAddress(uint8_t addr);
 
@@ -53,7 +53,7 @@ private:
 
 void WriteReg(uint8_t Reg,uint8_t val);
 
-TwoWire I2CBus;
+TwoWire* I2CBus;
 
 uint8_t address = QMC5883_ADDR;
 
