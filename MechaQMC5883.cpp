@@ -7,10 +7,10 @@ void MechaQMC5883::setAddress(uint8_t addr){
 }
 
 void MechaQMC5883::WriteReg(byte Reg,byte val){
-  Wire.beginTransmission(address); //start talking
-  Wire.write(Reg); // Tell the HMC5883 to Continuously Measure
-  Wire.write(val); // Set the Register
-  Wire.endTransmission();
+  I2CBus.beginTransmission(address); //start talking
+  I2CBus.write(Reg); // Tell the HMC5883 to Continuously Measure
+  I2CBus.write(val); // Set the Register
+  I2CBus.endTransmission();
 }
 
 void MechaQMC5883::init(){
@@ -46,15 +46,15 @@ void MechaQMC5883::softReset(){
  *  - 8:overflow (magnetic field too strong)
  */
 int MechaQMC5883::read(int* x,int* y,int* z){
-  Wire.beginTransmission(address);
-  Wire.write(0x00);
-  int err = Wire.endTransmission();
+  I2CBus.beginTransmission(address);
+  I2CBus.write(0x00);
+  int err = I2CBus.endTransmission();
   if (err) {return err;}
-  Wire.requestFrom(address, 7);
-  *x = (int)(int16_t)(Wire.read() | Wire.read() << 8);
-  *y = (int)(int16_t)(Wire.read() | Wire.read() << 8);
-  *z = (int)(int16_t)(Wire.read() | Wire.read() << 8);
-  byte overflow = Wire.read() & 0x02;
+  I2CBus.requestFrom(address, 7);
+  *x = (int)(int16_t)(I2CBus.read() | I2CBus.read() << 8);
+  *y = (int)(int16_t)(I2CBus.read() | I2CBus.read() << 8);
+  *z = (int)(int16_t)(I2CBus.read() | I2CBus.read() << 8);
+  byte overflow = I2CBus.read() & 0x02;
   return overflow << 2;
 }
 
