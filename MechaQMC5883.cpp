@@ -50,7 +50,7 @@ int MechaQMC5883::read(int* x,int* y,int* z){
   I2CBus->write(0x00);
   int err = I2CBus->endTransmission();
   if (err) {return err;}
-  I2CBus->requestFrom(address, 7);
+  I2CBus->requestFrom(address, static_cast<uint8_t>(7));
   *x = (int)(int16_t)(I2CBus->read() | I2CBus->read() << 8);
   *y = (int)(int16_t)(I2CBus->read() | I2CBus->read() << 8);
   *z = (int)(int16_t)(I2CBus->read() | I2CBus->read() << 8);
